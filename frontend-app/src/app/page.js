@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +10,15 @@ import Image from 'next/image';
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState('all');
-  const { openAuthModal } = useAuth();
+  const { isLoggedIn, openAuthModal } = useAuth();
+  const router = useRouter();
+
+  // 로그인된 사용자는 대시보드로 리다이렉트
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push('/dashboard');
+    }
+  }, [isLoggedIn, router]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -22,7 +31,19 @@ export default function Home() {
     }
   };
 
-
+  // 로그인된 사용자가 이 페이지에 접근하면 로딩 표시
+  if (isLoggedIn) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">대시보드로 이동 중...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -96,8 +117,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-
       </div>
     </Layout>
   );

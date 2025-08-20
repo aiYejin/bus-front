@@ -3,11 +3,17 @@
 import Link from 'next/link';
 import AuthModal from '@/components/AuthModal';
 import { useAuth } from '@/contexts/AuthContext';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function Layout({ children }) {
     const { isLoggedIn, isAuthModalOpen, openAuthModal, closeAuthModal, handleLoginSuccess, handleLogout } = useAuth();
     const pathname = usePathname();
+    const router = useRouter();
+
+    const handleLogoutClick = () => {
+        handleLogout();
+        router.push('/');
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -38,7 +44,7 @@ export default function Layout({ children }) {
                         프로필
                     </Link>
                     <button
-                        onClick={handleLogout}
+                        onClick={handleLogoutClick}
                         className="text-gray-700 hover:text-blue-600 text-sm font-medium"
                     >
                         로그아웃

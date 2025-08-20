@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { authAPI } from '@/services/api';
+import { useRouter } from 'next/navigation';
 
 export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     const [isLoginMode, setIsLoginMode] = useState(true);
@@ -16,6 +17,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         if (isOpen) {
@@ -25,6 +27,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
             setError('');
             setShowSuccessMessage(false);
         } else {
+            // 모달이 닫힐 때 로그인 모드로 초기화
             setIsLoginMode(true);
             setFormData({ username: '', email: '', password: '', confirmPassword: '' });
             setError('');
@@ -56,6 +59,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                     localStorage.setItem('email', response.data.email);
                     onLoginSuccess();
                     onClose();
+                    router.push('/dashboard'); // 로그인 성공 시 대시보드로 이동
                 }
             } else {
                 // 회원가입

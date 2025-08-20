@@ -31,7 +31,6 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('username');
         localStorage.removeItem('email');
         setIsLoggedIn(false);
-        window.location.href = '/';
     };
 
     const value = {
