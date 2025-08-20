@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
+import LoginModal from '@/components/LoginModal';
 import Image from 'next/image';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchType, setSearchType] = useState('all'); // 'all', 'bus', 'stop'
+  const [searchType, setSearchType] = useState('all');
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -18,6 +20,11 @@ export default function Home() {
       }
       window.location.href = `/search?${params.toString()}`;
     }
+  };
+
+  const handleLoginSuccess = () => {
+    // 로그인 성공 후 처리
+    window.location.reload();
   };
 
   return (
@@ -72,7 +79,7 @@ export default function Home() {
 
         {/* 추가 기능 안내 섹션 */}
         <div className="bg-gray-200 border-t">
-          <div className="max-w-4xl mx-auto px-4 py-40">
+          <div className="max-w-4xl mx-auto px-4 py-32">
             <div className="text-center">
               <h3 className="text-3xl font-semibold text-gray-900 mb-4">
                 더 많은 기능을 이용해보세요!
@@ -82,16 +89,23 @@ export default function Home() {
               </p>
               
               <div className="space-y-4">
-                <Link
-                  href="/login"
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
                   className="bg-blue-500 text-white px-8 py-4 rounded-md text-base font-medium hover:bg-blue-600 inline-block mb-4"
                 >
                   로그인하기
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         </div>
+
+        {/* 로그인 모달 */}
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
       </div>
     </Layout>
   );
