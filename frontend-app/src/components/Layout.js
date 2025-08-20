@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+// import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function Layout({ children }) {
@@ -19,14 +20,6 @@ export default function Layout({ children }) {
     window.location.href = '/';
   };
 
-  const navigation = [
-    { name: '홈', href: '/', current: pathname === '/' },
-    { name: '버스 검색', href: '/search', current: pathname === '/search' },
-    { name: '즐겨찾기', href: '/favorites', current: pathname === '/favorites' },
-    { name: '최근 검색', href: '/recents', current: pathname === '/recents' },
-    { name: '알림', href: '/notifications', current: pathname === '/notifications' },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
@@ -35,27 +28,15 @@ export default function Layout({ children }) {
           <div className="flex justify-between items-center h-16">
             {/* 로고 */}
             <div className="flex items-center">
-              <Link href="/" className="text-xl font-bold text-blue-600">
-                버스알리미
-              </Link>
+            <img 
+                src="/logo.png" 
+                alt="BusAlimi Logo" 
+                className="w-8 h-8 mr-2"
+            />
+            <Link href="/" className="text-xl font-bold text-blue-600">
+                BusAlimi
+            </Link>
             </div>
-
-            {/* 네비게이션 */}
-            <nav className="hidden md:flex space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    item.current
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
 
             {/* 사용자 메뉴 */}
             <div className="flex items-center space-x-4">
@@ -83,7 +64,7 @@ export default function Layout({ children }) {
                     로그인
                   </Link>
                   <Link
-                    href="/register"
+                    href="/signup"
                     className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
                   >
                     회원가입
@@ -96,7 +77,7 @@ export default function Layout({ children }) {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main>
         {children}
       </main>
 
@@ -104,7 +85,7 @@ export default function Layout({ children }) {
       <footer className="bg-white border-t mt-auto">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="text-center text-gray-500 text-sm">
-            © 2024 버스알리미. All rights reserved.
+            © 2024 BusAlimi. All rights reserved.
           </div>
         </div>
       </footer>
