@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
-import LoginModal from '@/components/LoginModal';
+import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState('all');
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const { openAuthModal } = useAuth();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -22,10 +22,7 @@ export default function Home() {
     }
   };
 
-  const handleLoginSuccess = () => {
-    // 로그인 성공 후 처리
-    window.location.reload();
-  };
+
 
   return (
     <Layout>
@@ -90,7 +87,7 @@ export default function Home() {
               
               <div className="space-y-4">
                 <button
-                  onClick={() => setIsLoginModalOpen(true)}
+                  onClick={openAuthModal}
                   className="bg-blue-500 text-white px-8 py-4 rounded-md text-base font-medium hover:bg-blue-600 inline-block mb-4"
                 >
                   로그인하기
@@ -100,12 +97,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 로그인 모달 */}
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
-          onLoginSuccess={handleLoginSuccess}
-        />
+
       </div>
     </Layout>
   );

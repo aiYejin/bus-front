@@ -1,30 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import LoginModal from '@/components/LoginModal';
+import AuthModal from '@/components/AuthModal';
+import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
 
 export default function Layout({ children }) {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const { isLoggedIn, isAuthModalOpen, openAuthModal, closeAuthModal, handleLoginSuccess, handleLogout } = useAuth();
     const pathname = usePathname();
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        setIsLoggedIn(!!token);
-    }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
-        window.location.href = '/';
-    };
-
-    const handleLoginSuccess = () => {  // 로그인 성공 처리 추가
-        setIsLoggedIn(true);
-        setIsLoginModalOpen(false);
-    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -64,17 +47,17 @@ export default function Layout({ children }) {
                 ) : (
                     <div className="flex items-center space-x-5">
                     <button 
-                        onClick={() => setIsLoginModalOpen(true)}  
+                        onClick={openAuthModal}  
                         className="text-gray-700 hover:text-blue-600 text-sm font-medium"
                     >
                         로그인
                     </button>
-                    <Link
-                        href="/signup"
+                    <button
+                        onClick={openAuthModal}
                         className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
                     >
                         회원가입
-                    </Link>
+                    </button>
                     </div>
                 )}
                 </div>
@@ -96,10 +79,10 @@ export default function Layout({ children }) {
             </div>
         </footer>
 
-        {/* 로그인 모달 추가 */}
-        <LoginModal
-            isOpen={isLoginModalOpen}
-            onClose={() => setIsLoginModalOpen(false)}
+        {/* Auth 모달 */}
+        <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={closeAuthModal}
             onLoginSuccess={handleLoginSuccess}
         />
         </div>
