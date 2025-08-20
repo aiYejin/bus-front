@@ -79,7 +79,7 @@ export default function Home() {
 
         {/* 추가 기능 안내 섹션 */}
         <div className="bg-gray-200 border-t">
-          <div className="max-w-4xl mx-auto px-4 py-32">
+          <div className="max-w-4xl mx-auto px-4 py-40">
             <div className="text-center">
               <h3 className="text-3xl font-semibold text-gray-900 mb-4">
                 더 많은 기능을 이용해보세요!
