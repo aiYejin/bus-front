@@ -6,6 +6,9 @@ import { busAPI, recentAPI } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import FavoriteButton from '@/components/FavoriteButton';
+import NotificationButton from '@/components/NotificationButton';
+import NotificationToast from '@/components/NotificationToast';
+import useNotificationChecker from '@/hooks/useNotificationChecker';
 
 export default function StationDetailPage() {
   const params = useParams();
@@ -15,6 +18,11 @@ export default function StationDetailPage() {
   const [stationDetail, setStationDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  
+  // 알림 체커 훅 사용
+  useNotificationChecker();
 
   useEffect(() => {
     const fetchStationDetail = async () => {
@@ -52,6 +60,43 @@ export default function StationDetailPage() {
 
     fetchStationDetail();
   }, [stationId, searchParams, user?.id]);
+
+  // 알림 Toast 이벤트 리스너
+  useEffect(() => {
+    const handleShowNotification = (event) => {
+      console.log('[정류장 페이지] Toast 이벤트 수신:', event.detail);
+      setToastMessage(event.detail);
+      setShowToast(true);
+    };
+
+    window.addEventListener('showNotification', handleShowNotification);
+    return () => window.removeEventListener('showNotification', handleShowNotification);
+  }, []);
+
+  // 15초마다 도착 정보 업데이트
+  useEffect(() => {
+    if (!stationDetail?.stationId) return;
+
+    const updateArrivals = async () => {
+      try {
+        const response = await busAPI.getStationArrivals(stationDetail.stationId);
+        const arrivals = response.data || [];
+        
+        // 기존 정류장 정보는 유지하고 도착 정보만 업데이트
+        setStationDetail(prev => ({
+          ...prev,
+          arrivals: arrivals
+        }));
+      } catch (error) {
+        console.error('도착 정보 업데이트 실패:', error);
+      }
+    };
+
+    // 15초마다 도착 정보 업데이트
+    const interval = setInterval(updateArrivals, 15000);
+    
+    return () => clearInterval(interval);
+  }, [stationDetail?.stationId]);
 
   if (isLoading) {
     return (
@@ -94,6 +139,13 @@ export default function StationDetailPage() {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
+        {/* 알림 Toast */}
+        <NotificationToast
+          message={toastMessage}
+          isVisible={showToast}
+          onClose={() => setShowToast(false)}
+        />
+        
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* 정류장 기본 정보 */}
                      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
@@ -190,6 +242,14 @@ export default function StationDetailPage() {
                            }`}></div>
                            <span>{(arrival.flag1 === 'Y' || arrival.flag2 === 'Y') ? '운행중' : '운행종료'}</span>
                          </div>
+                         
+                         {/* 알림 버튼 */}
+                         <NotificationButton
+                           stationId={stationDetail.stationId}
+                           routeId={arrival.routeId}
+                           routeName={arrival.routeName}
+                           stationName={stationDetail.stationName}
+                         />
                        </div>
                      </div>
                     

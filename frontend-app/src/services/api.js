@@ -31,6 +31,9 @@ export const busAPI = {
   // 정류장 상세 정보 (도착 정보 포함)
   getStationDetail: (stationId) => apiClient.get(`/api/stations/${stationId}/detail`),
   
+  // 정류장 도착 정보만 가져오기
+  getStationArrivals: (stationId) => apiClient.get(`/api/stations/${stationId}/arrivals`),
+  
   // 노선 상세 정보 (정류장 목록 포함)
   getRouteDetail: (routeId) => apiClient.get(`/api/routes/${routeId}/detail`),
   
@@ -71,13 +74,15 @@ export const recentAPI = {
 
 export const notificationAPI = {
   // 알림 목록 조회
-  getNotifications: () => apiClient.get('/api/notifications'),
+  getNotifications: (userId) => apiClient.get('/api/notifications', { params: { userId } }),
   
-  // 알림 읽음 처리
-  markAsRead: (notificationId) => apiClient.put(`/api/notifications/${notificationId}/read`),
+  // 알림 설정 추가
+  addNotification: (notificationData) => apiClient.post('/api/notifications', notificationData),
   
   // 알림 삭제
-  deleteNotification: (notificationId) => apiClient.delete(`/api/notifications/${notificationId}`),
+  deleteNotification: (notificationId, userId) => apiClient.delete(`/api/notifications/${notificationId}`, {
+    params: { userId }
+  }),
 };
 
 export const reportAPI = {

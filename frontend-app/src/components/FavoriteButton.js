@@ -99,12 +99,7 @@ export default function FavoriteButton({ type, refId, refName, additionalInfo = 
     }
   };
 
-  // 디버깅용 로그
-  console.log('FavoriteButton - user:', user);
-  console.log('FavoriteButton - isLoggedIn:', user?.id);
-
   if (!user?.id) {
-    console.log('FavoriteButton - 버튼 숨김 (로그인 안됨)');
     return null; // 로그인하지 않은 경우 버튼 숨김
   }
 
