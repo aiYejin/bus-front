@@ -5,14 +5,17 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import SearchComponent from '@/components/SearchComponent';
-import { favoriteAPI } from '@/services/api';
+import { favoriteAPI, recentAPI } from '@/services/api';
 
 export default function Dashboard() {
   const { isLoggedIn, user, handleLogout } = useAuth();
   const router = useRouter();
   const [favorites, setFavorites] = useState([]);
+  const [recents, setRecents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [recentLoading, setRecentLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [recentError, setRecentError] = useState(null);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -23,6 +26,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (isLoggedIn && user?.id) {
       refreshFavorites();
+      refreshRecents();
     }
   }, [isLoggedIn, user?.id]);
 
@@ -52,6 +56,22 @@ export default function Dashboard() {
     }
   };
 
+  const refreshRecents = async () => {
+    if (!user?.id) return;
+    
+    try {
+      setRecentLoading(true);
+      const response = await recentAPI.getRecents(user.id);
+      setRecents(response.data || []);
+      setRecentError(null);
+    } catch (err) {
+      console.error('최근 검색 목록을 가져오는데 실패했습니다:', err);
+      setRecentError('최근 검색 목록을 불러오는데 실패했습니다.');
+    } finally {
+      setRecentLoading(false);
+    }
+  };
+
   const handleDeleteFavorite = async (e, favoriteId) => {
     e.stopPropagation(); // 클릭 이벤트 전파 방지
     if (!confirm('이 즐겨찾기를 삭제하시겠습니까?')) return;
@@ -66,7 +86,7 @@ export default function Dashboard() {
     }
   };
 
-  const renderFavoriteItem = (favorite) => {
+    const renderFavoriteItem = (favorite) => {
     const handleFavoriteClick = () => {
       if (favorite.type === 'ROUTE') {
         router.push(`/route/${favorite.refId}`);
@@ -75,44 +95,96 @@ export default function Dashboard() {
       }
     };
 
-         if (favorite.type === 'ROUTE') {
-       return (
-         <div 
-           key={favorite.id} 
-           className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
-           onClick={handleFavoriteClick}
-         >
-           <div className="font-medium text-gray-900">{favorite.refName}</div>
-           <div className="text-sm text-gray-600">{favorite.additionalInfo || '노선 정보'}</div>
-           <div className="text-xs text-blue-600 mt-1">{favorite.alias || '즐겨찾기'}</div>
-           <button
-             onClick={(e) => handleDeleteFavorite(e, favorite.id)}
-             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
-             title="삭제"
-           >
-             ×
-           </button>
-         </div>
-       );
-         } else if (favorite.type === 'STOP') {
-       return (
-         <div 
-           key={favorite.id} 
-           className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
-           onClick={handleFavoriteClick}
-         >
-           <div className="font-medium text-gray-900">{favorite.refName}</div>
-           <div className="text-sm text-gray-600">{favorite.refId}</div>
-           <div className="text-xs text-blue-600 mt-1">{favorite.alias || '즐겨찾기'}</div>
-           <button
-             onClick={(e) => handleDeleteFavorite(e, favorite.id)}
-             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
-             title="삭제"
-           >
-             ×
-           </button>
-         </div>
-       );
+          if (favorite.type === 'ROUTE') {
+        return (
+          <div 
+            key={favorite.id} 
+            className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
+            onClick={handleFavoriteClick}
+          >
+            <div className="font-medium text-gray-900">{favorite.refName}</div>
+            <div className="text-sm text-gray-600">{favorite.additionalInfo || '노선 정보'}</div>
+            <div className="text-xs text-blue-600 mt-1">{favorite.alias || '즐겨찾기'}</div>
+            <button
+              onClick={(e) => handleDeleteFavorite(e, favorite.id)}
+              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
+              title="삭제"
+            >
+              ×
+            </button>
+          </div>
+        );
+          } else if (favorite.type === 'STOP') {
+        return (
+          <div 
+            key={favorite.id} 
+            className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
+            onClick={handleFavoriteClick}
+          >
+            <div className="font-medium text-gray-900">{favorite.refName}</div>
+            <div className="text-sm text-gray-600">{favorite.refId}</div>
+            <div className="text-xs text-blue-600 mt-1">{favorite.alias || '즐겨찾기'}</div>
+            <button
+              onClick={(e) => handleDeleteFavorite(e, favorite.id)}
+              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
+              title="삭제"
+            >
+              ×
+            </button>
+          </div>
+        );
+     }
+     return null;
+   };
+
+  const renderRecentItem = (recent) => {
+    const handleRecentClick = () => {
+      if (recent.entityType === 'ROUTE') {
+        router.push(`/route/${recent.refId}`);
+      } else if (recent.entityType === 'STOP') {
+        router.push(`/station/${recent.refId}`);
+      }
+    };
+
+    const formatTimeAgo = (viewedAt) => {
+      const now = new Date();
+      const viewed = new Date(viewedAt);
+      const diffInMinutes = Math.floor((now - viewed) / (1000 * 60));
+      
+      if (diffInMinutes < 1) return '방금 전';
+      if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+      
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) return `${diffInHours}시간 전`;
+      
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays}일 전`;
+    };
+
+    if (recent.entityType === 'ROUTE') {
+      return (
+        <div 
+          key={recent.id} 
+          className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+          onClick={handleRecentClick}
+        >
+          <div className="font-medium text-gray-900">{recent.refName}</div>
+          <div className="text-sm text-gray-600">{recent.additionalInfo || '노선 정보'}</div>
+          <div className="text-xs text-gray-500 mt-1">{formatTimeAgo(recent.viewedAt)}</div>
+        </div>
+      );
+    } else if (recent.entityType === 'STOP') {
+      return (
+        <div 
+          key={recent.id} 
+          className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+          onClick={handleRecentClick}
+        >
+          <div className="font-medium text-gray-900">{recent.refName}</div>
+          <div className="text-sm text-gray-600">{recent.additionalInfo || '정류장 정보'}</div>
+          <div className="text-xs text-gray-500 mt-1">{formatTimeAgo(recent.viewedAt)}</div>
+        </div>
+      );
     }
     return null;
   };
@@ -171,23 +243,35 @@ export default function Dashboard() {
 
               {/* 2번 영역: 최근 검색 */}
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">최근 검색 (3개의 최근 검색 기록)</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    최근 검색 ({recents.length}개의 최근 검색 기록)
+                  </h3>
+                  <button
+                    onClick={refreshRecents}
+                    className="text-blue-600 hover:text-blue-800 text-sm"
+                    title="새로고침"
+                  >
+                    ↻
+                  </button>
+                </div>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-gray-900">472번</div>
-                    <div className="text-sm text-gray-600">강남역 ↔ 잠실역</div>
-                    <div className="text-xs text-gray-500 mt-1">5분 전</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-gray-900">역삼역(2번출구)</div>
-                    <div className="text-sm text-gray-600">02301</div>
-                    <div className="text-xs text-gray-500 mt-1">15분 전</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-gray-900">146번</div>
-                    <div className="text-sm text-gray-600">강남역 ↔ 서초역</div>
-                    <div className="text-xs text-gray-500 mt-1">30분 전</div>
-                  </div>
+                  {recentLoading ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                      <p className="text-sm text-gray-500 mt-2">최근 검색 목록을 불러오는 중...</p>
+                    </div>
+                  ) : recentError ? (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-red-500">{recentError}</p>
+                    </div>
+                  ) : recents.length > 0 ? (
+                    recents.map(renderRecentItem)
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-500">최근 검색 기록이 없습니다.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

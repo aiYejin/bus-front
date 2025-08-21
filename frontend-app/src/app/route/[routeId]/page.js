@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { busAPI } from '@/services/api';
+import { useParams, useSearchParams } from 'next/navigation';
+import { busAPI, recentAPI } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import FavoriteButton from '@/components/FavoriteButton';
 
 export default function RouteDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const routeId = params.routeId;
+  const { user } = useAuth();
   const [routeDetail, setRouteDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,6 +26,22 @@ export default function RouteDetailPage() {
       try {
         const response = await busAPI.getRouteDetail(routeId);
         setRouteDetail(response.data);
+        
+        // 검색을 통해 들어온 경우에만 최근 검색에 추가
+        const isFromSearch = searchParams.get('from') === 'search';
+        if (isFromSearch && user?.id && response.data) {
+          try {
+            await recentAPI.addRecent({
+              userId: user.id,
+              entityType: 'ROUTE',
+              refId: response.data.routeId,
+              refName: response.data.routeName,
+              additionalInfo: `${response.data.startStationName} ↔ ${response.data.endStationName}`
+            });
+          } catch (err) {
+            console.error('최근 검색 추가 실패:', err);
+          }
+        }
       } catch (err) {
         console.error('노선 상세정보 조회 실패:', err);
         setError('노선 정보를 불러오는데 실패했습니다.');
@@ -32,7 +51,7 @@ export default function RouteDetailPage() {
     };
 
     fetchRouteDetail();
-  }, [routeId]);
+  }, [routeId, searchParams, user?.id]);
 
   if (isLoading) {
     return (

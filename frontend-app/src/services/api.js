@@ -57,7 +57,7 @@ export const favoriteAPI = {
 
 export const recentAPI = {
   // 최근 검색 목록 조회
-  getRecents: () => apiClient.get('/api/recents'),
+  getRecents: (userId) => apiClient.get('/api/recents', { params: { userId } }),
   
   // 최근 검색 추가
   addRecent: (recentData) => apiClient.post('/api/recents', recentData),

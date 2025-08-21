@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { busAPI } from '@/services/api';
+import { useParams, useSearchParams } from 'next/navigation';
+import { busAPI, recentAPI } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import FavoriteButton from '@/components/FavoriteButton';
 
 export default function StationDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const stationId = params.stationId;
+  const { user } = useAuth();
   const [stationDetail, setStationDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,6 +26,22 @@ export default function StationDetailPage() {
       try {
         const response = await busAPI.getStationDetail(stationId);
         setStationDetail(response.data);
+        
+        // 검색을 통해 들어온 경우에만 최근 검색에 추가
+        const isFromSearch = searchParams.get('from') === 'search';
+        if (isFromSearch && user?.id && response.data) {
+          try {
+            await recentAPI.addRecent({
+              userId: user.id,
+              entityType: 'STOP',
+              refId: response.data.stationId,
+              refName: response.data.stationName,
+              additionalInfo: `ARS: ${response.data.arsId || '정보없음'}`
+            });
+          } catch (err) {
+            console.error('최근 검색 추가 실패:', err);
+          }
+        }
       } catch (err) {
         console.error('정류장 상세정보 조회 실패:', err);
         setError('정류장 정보를 불러오는데 실패했습니다.');
@@ -32,7 +51,7 @@ export default function StationDetailPage() {
     };
 
     fetchStationDetail();
-  }, [stationId]);
+  }, [stationId, searchParams, user?.id]);
 
   if (isLoading) {
     return (

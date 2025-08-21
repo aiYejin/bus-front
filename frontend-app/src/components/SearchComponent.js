@@ -64,11 +64,11 @@ export default function SearchComponent({ onSearchResult, placeholder = "예: 47
     setSearchQuery('');
     
     if (type === 'route') {
-      // 노선 상세정보 페이지로 이동
-      router.push(`/route/${item.routeId}`);
+      // 노선 상세정보 페이지로 이동 (검색을 통해 들어온 것으로 표시)
+      router.push(`/route/${item.routeId}?from=search`);
     } else if (type === 'stop') {
-      // 정류장 상세정보 페이지로 이동
-      router.push(`/station/${item.stationId}`);
+      // 정류장 상세정보 페이지로 이동 (검색을 통해 들어온 것으로 표시)
+      router.push(`/station/${item.stationId}?from=search`);
     }
   };
 
