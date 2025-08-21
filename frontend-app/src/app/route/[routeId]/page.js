@@ -2,12 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { busAPI, recentAPI } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import FavoriteButton from '@/components/FavoriteButton';
 import NotificationButton from '@/components/NotificationButton';
-import RouteMap from '@/components/RouteMap';
+
+// RouteMap을 동적으로 import (SSR 비활성화)
+const RouteMap = dynamic(() => import('@/components/RouteMap'), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-gray-100 rounded-lg flex items-center justify-center">지도 로딩중...</div>
+});
 
 export default function RouteDetailPage() {
   const params = useParams();
@@ -204,7 +210,7 @@ export default function RouteDetailPage() {
                        <div className="ml-12 flex-1">
                          <div className="font-semibold text-gray-900 text-lg">{station.stationName}</div>
                          <div className="text-sm text-gray-600 mt-1">
-                           {station.mobileNo || '정보없음'}
+                           {station.mobileNo ? `ARS: ${station.mobileNo}` : `정류장ID: ${station.stationId}`}
                          </div>
                        </div>
                        
