@@ -1,41 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
 import AuthModal from '@/components/AuthModal';
-import LocationSelector from '@/components/LocationSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function Layout({ children }) {
-    const { isLoggedIn, user, isLoading, isAuthModalOpen, openAuthModal, closeAuthModal, handleLoginSuccess, handleLogout, updateUserInfo } = useAuth();
-    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+    const { isLoggedIn, user, isLoading, isAuthModalOpen, openAuthModal, closeAuthModal, handleLoginSuccess, handleLogout } = useAuth();
     const pathname = usePathname();
     const router = useRouter();
 
     const handleLogoutClick = () => {
         handleLogout();
         router.push('/');
-    };
-
-    const openLocationModal = () => {
-        setIsLocationModalOpen(true);
-    };
-
-    const closeLocationModal = () => {
-        setIsLocationModalOpen(false);
-    };
-
-    const handleLocationUpdate = (updatedUser) => {
-        updateUserInfo(updatedUser);
-    };
-
-    // 현재 위치 표시 텍스트
-    const getLocationText = () => {
-        if (!user?.currentLat || !user?.currentLng) {
-            return 'KT 판교지사';
-        }
-        return user.currentLocationName || '현재 위치';
     };
 
     return (
@@ -56,16 +33,7 @@ export default function Layout({ children }) {
                 </Link>
                 </div>
 
-                {/* 중앙: 위치 정보 */}
-                <div className="flex items-center">
-                    <button
-                        onClick={openLocationModal}
-                        className="flex items-center justify-between px-6 py-2 bg-white border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 shadow-sm min-w-48"
-                    >
-                        <span>{getLocationText()}</span>
-                        <span className="text-gray-400 ml-4">▼</span>
-                    </button>
-                </div>
+
 
                 {/* 사용자 메뉴 */}
                 <div className="flex items-center space-x-4">
@@ -133,13 +101,6 @@ export default function Layout({ children }) {
             isOpen={isAuthModalOpen}
             onClose={closeAuthModal}
             onLoginSuccess={handleLoginSuccess}
-        />
-
-        {/* Location 모달 */}
-        <LocationSelector
-            isOpen={isLocationModalOpen}
-            onClose={closeLocationModal}
-            onLocationUpdate={handleLocationUpdate}
         />
         </div>
     );

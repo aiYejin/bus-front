@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import SearchComponent from '@/components/SearchComponent';
+import NearbyStations from '@/components/NearbyStations';
 import { favoriteAPI, recentAPI } from '@/services/api';
 
 export default function Dashboard() {
@@ -279,72 +280,7 @@ export default function Dashboard() {
             {/* 3번 영역: 주변 정류장 (1:2 비율) */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <div className="mb-4">
-                  <h3 className="text-xl font-semibold text-gray-800">주변 정류장</h3>
-                  <p className="text-gray-600">강남역 주변 정류장</p>
-                  <div className="flex items-center mt-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm text-green-600">실시간 업데이트</span>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="font-medium mb-2 text-gray-900">472번</div>
-                    <div className="text-sm text-gray-600 mb-2">강남역(중앙...</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">보통 2분 후 도착</span>
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">여유 7분 후 도착</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="font-medium mb-2 text-gray-900">146번</div>
-                    <div className="text-sm text-gray-600 mb-2">강남역(중앙...</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-sm">혼잡 곧 도착</span>
-                      <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">보통 12분 후 도착</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="font-medium mb-2 text-gray-900">143번</div>
-                    <div className="text-sm text-gray-600 mb-2">논현역(2번출...</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">여유 5분 후 도착</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="font-medium mb-2 text-gray-900">472번</div>
-                    <div className="text-sm text-gray-600 mb-2">역삼역(2번출...</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">보통 8분 후 도착</span>
-                      <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-sm">혼잡 15분 후 도착</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="font-medium mb-2 text-gray-900">360번</div>
-                    <div className="text-sm text-gray-600 mb-2">강남역(중앙...</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">여유 3분 후 도착</span>
-                      <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">보통 10분 후 도착</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="font-medium mb-2 text-gray-900">740번</div>
-                    <div className="text-sm text-gray-600 mb-2">역삼역(2번출...</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-sm">혼잡 6분 후 도착</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-4 text-center">
-                  <a href="#" className="text-blue-600 hover:underline text-sm">더 많은 정류장 보기 →</a>
-                </div>
+                <NearbyStations compact={true} />
               </div>
             </div>
           </div>

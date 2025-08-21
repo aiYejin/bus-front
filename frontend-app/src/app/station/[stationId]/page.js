@@ -9,6 +9,13 @@ import FavoriteButton from '@/components/FavoriteButton';
 import NotificationButton from '@/components/NotificationButton';
 import NotificationToast from '@/components/NotificationToast';
 import useNotificationChecker from '@/hooks/useNotificationChecker';
+import dynamic from 'next/dynamic';
+
+// Leaflet 지도 컴포넌트를 동적으로 로드 (SSR 방지)
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 
 export default function StationDetailPage() {
   const params = useParams();
@@ -23,6 +30,21 @@ export default function StationDetailPage() {
   
   // 알림 체커 훅 사용
   useNotificationChecker();
+
+  // Leaflet CSS 동적 로드
+  useEffect(() => {
+    const loadLeafletCSS = () => {
+      if (!document.querySelector('link[href*="leaflet.css"]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+        link.crossOrigin = '';
+        document.head.appendChild(link);
+      }
+    };
+    loadLeafletCSS();
+  }, []);
 
   useEffect(() => {
     const fetchStationDetail = async () => {
@@ -148,70 +170,83 @@ export default function StationDetailPage() {
         
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* 정류장 기본 정보 */}
-                     <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-             <div className="flex items-center justify-between mb-4">
-               <div className="flex items-center space-x-4">
-                 <h1 className="text-3xl font-bold text-gray-900">{stationDetail.stationName}</h1>
-                 <FavoriteButton 
-                   type="STOP"
-                   refId={stationDetail.stationId}
-                   refName={stationDetail.stationName}
-                   additionalInfo={`ARS: ${stationDetail.arsId || '정보없음'}`}
-                 />
-               </div>
-               <div className="flex space-x-2">
-                 {stationDetail.centerYn === 'Y' && (
-                   <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
-                     중앙차로
-                   </div>
-                 )}
-                 <div className="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">
-                   정류장
-                 </div>
-               </div>
-             </div>
+          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-4">
+                <h1 className="text-3xl font-bold text-gray-900">{stationDetail.stationName}</h1>
+                <FavoriteButton 
+                  type="STOP"
+                  refId={stationDetail.stationId}
+                  refName={stationDetail.stationName}
+                  additionalInfo={`ARS: ${stationDetail.arsId || '정보없음'}`}
+                />
+              </div>
+              <div className="flex space-x-2">
+                {stationDetail.centerYn === 'Y' && (
+                  <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+                    중앙차로
+                  </div>
+                )}
+                <div className="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                  정류장
+                </div>
+              </div>
+            </div>
             
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               <div>
-                 <h3 className="text-lg font-semibold text-gray-900 mb-2">정류장 정보</h3>
-                 <div className="space-y-2 text-sm">
-                   <div className="flex justify-between">
-                     <span className="text-gray-700 font-medium">ARS 번호:</span>
-                     <span className="font-semibold text-gray-900">{stationDetail.arsId || '정보없음'}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-gray-700 font-medium">지역:</span>
-                     <span className="font-semibold text-gray-900">{stationDetail.regionName}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-gray-700 font-medium">위도:</span>
-                     <span className="font-semibold text-gray-900">{stationDetail.lat}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-gray-700 font-medium">경도:</span>
-                     <span className="font-semibold text-gray-900">{stationDetail.lng}</span>
-                   </div>
-                 </div>
-               </div>
-               
-               <div>
-                 <h3 className="text-lg font-semibold text-gray-900 mb-2">실시간 정보</h3>
-                 <div className="flex items-center space-x-2">
-                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                   <span className="text-sm text-green-600 font-medium">실시간 업데이트</span>
-                 </div>
-                 <div className="mt-2 text-sm text-gray-700">
-                   도착 정보가 실시간으로 업데이트됩니다.
-                 </div>
-               </div>
-             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">정류장 정보</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-700 font-medium">ARS 번호:</span>
+                    <span className="font-semibold text-gray-900">{stationDetail.arsId || '정보없음'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-700 font-medium">지역:</span>
+                    <span className="font-semibold text-gray-900">{stationDetail.regionName}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">위치</h3>
+                <div className="h-48 rounded-lg overflow-hidden border">
+                  {stationDetail.lat && stationDetail.lng && (
+                    <MapContainer 
+                      center={[parseFloat(stationDetail.lat), parseFloat(stationDetail.lng)]} 
+                      zoom={16} 
+                      style={{ height: '100%', width: '100%' }}
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={[parseFloat(stationDetail.lat), parseFloat(stationDetail.lng)]}>
+                        <Popup>
+                          <div className="text-center">
+                            <div className="font-semibold">{stationDetail.stationName}</div>
+                            <div className="text-sm text-gray-600">ARS: {stationDetail.arsId || '정보없음'}</div>
+                          </div>
+                        </Popup>
+                      </Marker>
+                    </MapContainer>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* 도착 정보 */}
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              도착 정보 ({stationDetail.arrivals ? stationDetail.arrivals.length : 0}개 노선)
-            </h2>
+            <div className="flex items-center space-x-3 mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">
+                도착 정보 ({stationDetail.arrivals ? stationDetail.arrivals.length : 0}개 노선)
+              </h2>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-green-600 font-medium">실시간 업데이트</span>
+              </div>
+            </div>
             
             {stationDetail.arrivals && stationDetail.arrivals.length > 0 ? (
               <div className="space-y-4">
@@ -273,31 +308,18 @@ export default function StationDetailPage() {
                               arrival.flag1 === 'Y' ? 'bg-white' : 'bg-gray-100'
                             }`}
                           >
-                           <div className="flex items-center justify-between mb-2">
+                           <div className="flex items-center mb-2">
                              <span className="text-sm font-medium text-gray-700">첫 번째 버스</span>
-                             <div className="flex items-center space-x-2">
-                               {/* 운행 상태 */}
-                               <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
-                                 arrival.flag1 === 'Y' 
-                                   ? 'bg-green-100 text-green-800' 
-                                   : 'bg-red-100 text-red-800'
+                             {/* 혼잡도 */}
+                             {arrival.congestion1 && arrival.flag1 === 'Y' && (
+                               <span className={`text-xs font-medium ml-2 ${
+                                 arrival.congestion1 === '여유' ? 'text-green-600' :
+                                 arrival.congestion1 === '보통' ? 'text-yellow-600' :
+                                 'text-red-600'
                                }`}>
-                                 <div className={`w-1.5 h-1.5 rounded-full ${
-                                   arrival.flag1 === 'Y' ? 'bg-green-500' : 'bg-red-500'
-                                 }`}></div>
-                                 <span>{arrival.flag1 === 'Y' ? '운행중' : '운행종료'}</span>
-                               </div>
-                                                               {/* 혼잡도 */}
-                                {arrival.congestion1 && arrival.flag1 === 'Y' && (
-                                  <span className={`text-xs font-medium ${
-                                    arrival.congestion1 === '여유' ? 'text-green-600' :
-                                    arrival.congestion1 === '보통' ? 'text-yellow-600' :
-                                    'text-red-600'
-                                  }`}>
-                                    {arrival.congestion1}
-                                  </span>
-                                )}
-                             </div>
+                                 ({arrival.congestion1})
+                               </span>
+                             )}
                            </div>
                            {arrival.flag1 === 'Y' ? (
                              <div className="space-y-1 text-sm">
@@ -333,31 +355,18 @@ export default function StationDetailPage() {
                               arrival.flag2 === 'Y' ? 'bg-white' : 'bg-gray-100'
                             }`}
                           >
-                           <div className="flex items-center justify-between mb-2">
+                           <div className="flex items-center mb-2">
                              <span className="text-sm font-medium text-gray-700">두 번째 버스</span>
-                             <div className="flex items-center space-x-2">
-                               {/* 운행 상태 */}
-                               <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
-                                 arrival.flag2 === 'Y' 
-                                   ? 'bg-green-100 text-green-800' 
-                                   : 'bg-red-100 text-red-800'
+                             {/* 혼잡도 */}
+                             {arrival.congestion2 && arrival.flag2 === 'Y' && (
+                               <span className={`text-xs font-medium ml-2 ${
+                                 arrival.congestion2 === '여유' ? 'text-green-600' :
+                                 arrival.congestion2 === '보통' ? 'text-yellow-600' :
+                                 'text-red-600'
                                }`}>
-                                 <div className={`w-1.5 h-1.5 rounded-full ${
-                                   arrival.flag2 === 'Y' ? 'bg-green-500' : 'bg-red-500'
-                                 }`}></div>
-                                 <span>{arrival.flag2 === 'Y' ? '운행중' : '운행종료'}</span>
-                               </div>
-                                                               {/* 혼잡도 */}
-                                {arrival.congestion2 && arrival.flag2 === 'Y' && (
-                                  <span className={`text-xs font-medium ${
-                                    arrival.congestion2 === '여유' ? 'text-green-600' :
-                                    arrival.congestion2 === '보통' ? 'text-yellow-600' :
-                                    'text-red-600'
-                                  }`}>
-                                    {arrival.congestion2}
-                                  </span>
-                                )}
-                             </div>
+                                 ({arrival.congestion2})
+                               </span>
+                             )}
                            </div>
                            {arrival.flag2 === 'Y' ? (
                              <div className="space-y-1 text-sm">

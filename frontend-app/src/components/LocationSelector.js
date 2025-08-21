@@ -315,7 +315,7 @@ export default function LocationSelector({ isOpen, onClose, onLocationUpdate }) 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && searchLocation(searchQuery)}
-                  className="w-full pl-5 pr-16 py-4 border-2 border-gray-300 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 text-base font-medium bg-white shadow-sm"
+                  className="w-full pl-5 pr-16 py-4 border-2 border-gray-300 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 text-base font-medium bg-white shadow-sm placeholder-gray-400"
                 />
                 <button
                   onClick={() => searchLocation(searchQuery)}
