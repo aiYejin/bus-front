@@ -15,6 +15,10 @@ export function AuthProvider({ children }) {
         const username = localStorage.getItem('username');
         const email = localStorage.getItem('email');
         const createdAt = localStorage.getItem('createdAt');
+        const currentLat = localStorage.getItem('currentLat');
+        const currentLng = localStorage.getItem('currentLng');
+        const currentLocationName = localStorage.getItem('currentLocationName');
+        const locationUpdatedAt = localStorage.getItem('locationUpdatedAt');
         
         if (userId) {
             setIsLoggedIn(true);
@@ -22,7 +26,11 @@ export function AuthProvider({ children }) {
                 id: userId,
                 username: username,
                 email: email,
-                createdAt: createdAt
+                createdAt: createdAt,
+                currentLat: currentLat ? parseFloat(currentLat) : null,
+                currentLng: currentLng ? parseFloat(currentLng) : null,
+                currentLocationName: currentLocationName,
+                locationUpdatedAt: locationUpdatedAt
             });
         }
         setIsLoading(false);
@@ -47,6 +55,10 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('username');
         localStorage.removeItem('email');
         localStorage.removeItem('createdAt');
+        localStorage.removeItem('currentLat');
+        localStorage.removeItem('currentLng');
+        localStorage.removeItem('currentLocationName');
+        localStorage.removeItem('locationUpdatedAt');
         setIsLoggedIn(false);
         setUser(null);
     };
@@ -55,6 +67,18 @@ export function AuthProvider({ children }) {
         setUser(updatedUser);
         localStorage.setItem('username', updatedUser.username);
         localStorage.setItem('email', updatedUser.email);
+        if (updatedUser.currentLat) {
+            localStorage.setItem('currentLat', updatedUser.currentLat.toString());
+        }
+        if (updatedUser.currentLng) {
+            localStorage.setItem('currentLng', updatedUser.currentLng.toString());
+        }
+        if (updatedUser.currentLocationName) {
+            localStorage.setItem('currentLocationName', updatedUser.currentLocationName);
+        }
+        if (updatedUser.locationUpdatedAt) {
+            localStorage.setItem('locationUpdatedAt', updatedUser.locationUpdatedAt);
+        }
     };
 
     const value = {

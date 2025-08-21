@@ -43,8 +43,8 @@ export const busAPI = {
   }),
   
   // 사용자 위치 업데이트
-  updateUserLocation: (userId, lat, lng) => apiClient.put(`/api/users/${userId}/location`, null, {
-    params: { lat, lng }
+  updateUserLocation: (userId, lat, lng, locationName) => apiClient.put(`/api/users/${userId}/location`, null, {
+    params: { lat, lng, locationName }
   }),
 };
 
