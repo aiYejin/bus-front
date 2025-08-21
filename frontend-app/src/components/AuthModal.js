@@ -173,7 +173,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     // 성공 메시지 팝업
     if (showSuccessMessage) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{ zIndex: 9999 }}>
                 <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
                     <div className="p-6 text-center">
                         <div className="mb-4">
@@ -207,7 +207,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     // 비밀번호 찾기 모달
     if (showFindPassword) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{ zIndex: 9999 }}>
                 <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
                     {/* 헤더 */}
                     <div className="flex justify-between items-center p-6 border-b">
@@ -295,7 +295,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{ zIndex: 9999 }}>
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
                 {/* 헤더 */}
                 <div className="flex justify-between items-center p-6 border-b">

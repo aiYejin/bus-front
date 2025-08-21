@@ -88,10 +88,35 @@ body {
   height: 100% !important;
   width: 100% !important;
   position: relative !important;
+  z-index: 1 !important;
 }
 
 /* 타일 레이어 스타일 */
 .leaflet-tile-pane {
   left: 0 !important;
   top: 0 !important;
+}
+
+/* Leaflet 모든 요소의 z-index 제한 */
+.leaflet-pane,
+.leaflet-tile-pane,
+.leaflet-overlay-pane,
+.leaflet-shadow-pane,
+.leaflet-marker-pane,
+.leaflet-tooltip-pane,
+.leaflet-popup-pane,
+.leaflet-map-pane,
+.leaflet-control-container {
+  z-index: auto !important;
+}
+
+/* 팝업만 약간 높이기 (하지만 모달보다는 낮게) */
+.leaflet-popup {
+  z-index: 10 !important;
+}
+
+/* 컨트롤 버튼들 */
+.leaflet-control-zoom,
+.leaflet-control-attribution {
+  z-index: 10 !important;
 }
