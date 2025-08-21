@@ -8,20 +8,24 @@ export function AuthProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
         const username = localStorage.getItem('username');
         const email = localStorage.getItem('email');
+        const createdAt = localStorage.getItem('createdAt');
         
         if (userId) {
             setIsLoggedIn(true);
             setUser({
                 id: userId,
                 username: username,
-                email: email
+                email: email,
+                createdAt: createdAt
             });
         }
+        setIsLoading(false);
     }, []);
 
     const openAuthModal = () => {
@@ -42,18 +46,27 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('userId');
         localStorage.removeItem('username');
         localStorage.removeItem('email');
+        localStorage.removeItem('createdAt');
         setIsLoggedIn(false);
         setUser(null);
+    };
+
+    const updateUserInfo = (updatedUser) => {
+        setUser(updatedUser);
+        localStorage.setItem('username', updatedUser.username);
+        localStorage.setItem('email', updatedUser.email);
     };
 
     const value = {
         isLoggedIn,
         user,
+        isLoading,
         isAuthModalOpen,
         openAuthModal,
         closeAuthModal,
         handleLoginSuccess,
-        handleLogout
+        handleLogout,
+        updateUserInfo
     };
 
     return (

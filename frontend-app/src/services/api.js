@@ -78,11 +78,25 @@ export const notificationAPI = {
 };
 
 export const reportAPI = {
-  // 버스 신고
-  reportBus: (reportData) => apiClient.post('/api/bus-reports', reportData),
+  // 사용자별 신고 목록 조회
+  getUserReports: (userId) => apiClient.get(`/api/reports/user/${userId}`),
   
-  // 신고 목록 조회
-  getReports: () => apiClient.get('/api/bus-reports'),
+  // 신고 등록
+  addReport: (reportData) => apiClient.post('/api/reports', reportData),
+  
+  // 신고 상세 조회
+  getReport: (reportId) => apiClient.get(`/api/reports/${reportId}`),
+};
+
+export const userAPI = {
+  // 사용자 정보 수정
+  updateUser: (userId, userData) => apiClient.put(`/api/auth/users/${userId}`, userData),
+  
+  // 비밀번호 변경
+  changePassword: (userId, passwordData) => apiClient.put(`/api/auth/users/${userId}/password`, passwordData),
+  
+  // 계정 삭제
+  deleteAccount: (userId, password) => apiClient.delete(`/api/auth/users/${userId}`, { data: { password } }),
 };
 
 export default apiClient;

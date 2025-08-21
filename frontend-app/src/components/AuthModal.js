@@ -57,12 +57,14 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                     localStorage.setItem('userId', response.data.userId);
                     localStorage.setItem('username', response.data.username);
                     localStorage.setItem('email', response.data.email);
+                    localStorage.setItem('createdAt', response.data.createdAt);
                     
                     // user 객체 생성하여 전달
                     const userData = {
                         id: response.data.userId,
                         username: response.data.username,
-                        email: response.data.email
+                        email: response.data.email,
+                        createdAt: response.data.createdAt
                     };
                     onLoginSuccess(userData);
                     onClose();

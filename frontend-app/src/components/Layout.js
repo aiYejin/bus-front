@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function Layout({ children }) {
-    const { isLoggedIn, isAuthModalOpen, openAuthModal, closeAuthModal, handleLoginSuccess, handleLogout } = useAuth();
+    const { isLoggedIn, user, isLoading, isAuthModalOpen, openAuthModal, closeAuthModal, handleLoginSuccess, handleLogout } = useAuth();
     const pathname = usePathname();
     const router = useRouter();
 
@@ -35,14 +35,29 @@ export default function Layout({ children }) {
 
                 {/* 사용자 메뉴 */}
                 <div className="flex items-center space-x-4">
-                {isLoggedIn ? (
+                {isLoading ? (
                     <div className="flex items-center space-x-5">
-                    <Link
-                        href="/profile"
+                        <div className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="w-20 h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                ) : isLoggedIn ? (
+                    <div className="flex items-center space-x-5">
+                    <span className="text-gray-700 text-sm font-medium">
+                        {user?.username || '사용자'} 님
+                    </span>
+                    <button
+                        onClick={() => {
+                            if (pathname === '/mypage') {
+                                window.location.reload();
+                            } else {
+                                router.push('/mypage');
+                            }
+                        }}
                         className="text-gray-700 hover:text-blue-600 text-sm font-medium"
                     >
-                        프로필
-                    </Link>
+                        마이페이지
+                    </button>
                     <button
                         onClick={handleLogoutClick}
                         className="text-gray-700 hover:text-blue-600 text-sm font-medium"
