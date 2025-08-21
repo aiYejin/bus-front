@@ -65,9 +65,7 @@ export const recentAPI = {
   
   // 최근 검색 삭제
   removeRecent: (recentId, userId) => {
-    console.log('removeRecent 호출:', { recentId, userId, recentIdType: typeof recentId });
     const url = `/api/recents/${encodeURIComponent(recentId)}`;
-    console.log('생성된 URL:', url);
     return apiClient.delete(url, {
       params: { userId }
     });

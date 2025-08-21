@@ -20,7 +20,7 @@ export default function Home() {
   }, [isLoggedIn, router]);
 
   const handleSearchResult = (searchData) => {
-    console.log('검색 결과:', searchData);
+
     // 여기에 검색 결과 처리 로직 추가
   };
 

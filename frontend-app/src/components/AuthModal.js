@@ -113,7 +113,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                 username: findPasswordData.username.trim()
             };
             
-            console.log('비밀번호 찾기 요청:', cleanedData);
+
             
             const response = await authAPI.findPassword(cleanedData);
             setShowSuccessMessage(true);

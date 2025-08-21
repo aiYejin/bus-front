@@ -37,7 +37,7 @@ export default function Dashboard() {
   };
 
   const handleSearchResult = (searchData) => {
-    console.log('검색 결과:', searchData);
+
     // 여기에 검색 결과 처리 로직 추가
   };
 
@@ -91,7 +91,7 @@ export default function Dashboard() {
     e.stopPropagation(); // 클릭 이벤트 전파 방지
     
     // recentId 유효성 검사
-    console.log('삭제할 recent 정보:', { recentId, type: typeof recentId, userId: user.id });
+
     
     if (!recentId || isNaN(recentId)) {
       alert('잘못된 최근 검색 ID입니다.');
@@ -101,15 +101,11 @@ export default function Dashboard() {
     if (!confirm('이 최근 검색을 삭제하시겠습니까?')) return;
     
     try {
-      console.log('최근 검색 삭제 시도:', { recentId: Number(recentId), userId: user.id });
       await recentAPI.removeRecent(Number(recentId), user.id);
-      console.log('최근 검색 삭제 성공');
       // 삭제 후 목록 새로고침
       await refreshRecents();
     } catch (err) {
       console.error('최근 검색 삭제에 실패했습니다:', err);
-      console.error('에러 상세:', err.response?.data || err.message);
-      console.error('요청 URL:', err.config?.url);
       
       const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || '최근 검색 삭제에 실패했습니다.';
       alert(`최근 검색 삭제 실패: ${errorMessage}`);
