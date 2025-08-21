@@ -87,6 +87,35 @@ export default function Dashboard() {
     }
   };
 
+  const handleDeleteRecent = async (e, recentId) => {
+    e.stopPropagation(); // 클릭 이벤트 전파 방지
+    
+    // recentId 유효성 검사
+    console.log('삭제할 recent 정보:', { recentId, type: typeof recentId, userId: user.id });
+    
+    if (!recentId || isNaN(recentId)) {
+      alert('잘못된 최근 검색 ID입니다.');
+      return;
+    }
+    
+    if (!confirm('이 최근 검색을 삭제하시겠습니까?')) return;
+    
+    try {
+      console.log('최근 검색 삭제 시도:', { recentId: Number(recentId), userId: user.id });
+      await recentAPI.removeRecent(Number(recentId), user.id);
+      console.log('최근 검색 삭제 성공');
+      // 삭제 후 목록 새로고침
+      await refreshRecents();
+    } catch (err) {
+      console.error('최근 검색 삭제에 실패했습니다:', err);
+      console.error('에러 상세:', err.response?.data || err.message);
+      console.error('요청 URL:', err.config?.url);
+      
+      const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || '최근 검색 삭제에 실패했습니다.';
+      alert(`최근 검색 삭제 실패: ${errorMessage}`);
+    }
+  };
+
     const renderFavoriteItem = (favorite) => {
     const handleFavoriteClick = () => {
       if (favorite.type === 'ROUTE') {
@@ -166,24 +195,38 @@ export default function Dashboard() {
       return (
         <div 
           key={recent.id} 
-          className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+          className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
           onClick={handleRecentClick}
         >
           <div className="font-medium text-gray-900">{recent.refName}</div>
           <div className="text-sm text-gray-600">{recent.additionalInfo || '노선 정보'}</div>
           <div className="text-xs text-gray-500 mt-1">{formatTimeAgo(recent.viewedAt)}</div>
+          <button
+            onClick={(e) => handleDeleteRecent(e, recent.id)}
+            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
+            title="삭제"
+          >
+            ×
+          </button>
         </div>
       );
     } else if (recent.entityType === 'STOP') {
       return (
         <div 
           key={recent.id} 
-          className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+          className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
           onClick={handleRecentClick}
         >
           <div className="font-medium text-gray-900">{recent.refName}</div>
           <div className="text-sm text-gray-600">{recent.additionalInfo || '정류장 정보'}</div>
           <div className="text-xs text-gray-500 mt-1">{formatTimeAgo(recent.viewedAt)}</div>
+          <button
+            onClick={(e) => handleDeleteRecent(e, recent.id)}
+            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
+            title="삭제"
+          >
+            ×
+          </button>
         </div>
       );
     }
@@ -211,7 +254,7 @@ export default function Dashboard() {
               <div className="bg-white rounded-lg shadow-sm border p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-semibold text-gray-800">
-                    즐겨찾기 ({favorites.length}개의 항목)
+                    즐겨찾기
                   </h3>
                   <button
                     onClick={refreshFavorites}
@@ -246,7 +289,7 @@ export default function Dashboard() {
               <div className="bg-white rounded-lg shadow-sm border p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-semibold text-gray-800">
-                    최근 검색 ({recents.length}개의 최근 검색 기록)
+                    최근 검색
                   </h3>
                   <button
                     onClick={refreshRecents}

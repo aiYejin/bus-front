@@ -196,7 +196,7 @@ export default function RouteDetailPage() {
                   <div className="space-y-0">
                     {routeDetail.stations.map((station, index) => (
                       <div
-                        key={station.stationId}
+                        key={`${station.stationId}-${index}`}
                         className="relative flex items-center py-4 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
                         onClick={() => window.location.href = `/station/${station.stationId}`}
                       >

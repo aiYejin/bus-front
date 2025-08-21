@@ -144,7 +144,7 @@ export default function FavoriteButton({ type, refId, refName, additionalInfo = 
                 value={alias}
                 onChange={(e) => setAlias(e.target.value)}
                 placeholder="별칭을 입력하세요"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                 autoFocus
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {

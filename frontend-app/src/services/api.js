@@ -64,7 +64,14 @@ export const recentAPI = {
   addRecent: (recentData) => apiClient.post('/api/recents', recentData),
   
   // 최근 검색 삭제
-  removeRecent: (recentId) => apiClient.delete(`/api/recents/${recentId}`),
+  removeRecent: (recentId, userId) => {
+    console.log('removeRecent 호출:', { recentId, userId, recentIdType: typeof recentId });
+    const url = `/api/recents/${encodeURIComponent(recentId)}`;
+    console.log('생성된 URL:', url);
+    return apiClient.delete(url, {
+      params: { userId }
+    });
+  },
 };
 
 export const notificationAPI = {
