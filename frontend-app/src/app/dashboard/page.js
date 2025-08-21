@@ -2,19 +2,29 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import SearchComponent from '@/components/SearchComponent';
+import { favoriteAPI } from '@/services/api';
 
 export default function Dashboard() {
-  const { isLoggedIn, handleLogout } = useAuth();
+  const { isLoggedIn, user, handleLogout } = useAuth();
   const router = useRouter();
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!isLoggedIn) {
       router.push('/');
     }
   }, [isLoggedIn, router]);
+
+  useEffect(() => {
+    if (isLoggedIn && user?.id) {
+      refreshFavorites();
+    }
+  }, [isLoggedIn, user?.id]);
 
   const handleLogoutClick = () => {
     handleLogout();
@@ -24,6 +34,87 @@ export default function Dashboard() {
   const handleSearchResult = (searchData) => {
     console.log('검색 결과:', searchData);
     // 여기에 검색 결과 처리 로직 추가
+  };
+
+  const refreshFavorites = async () => {
+    if (!user?.id) return;
+    
+    try {
+      setLoading(true);
+      const response = await favoriteAPI.getFavorites(user.id);
+      setFavorites(response.data || []);
+      setError(null);
+    } catch (err) {
+      console.error('즐겨찾기 목록을 가져오는데 실패했습니다:', err);
+      setError('즐겨찾기 목록을 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteFavorite = async (e, favoriteId) => {
+    e.stopPropagation(); // 클릭 이벤트 전파 방지
+    if (!confirm('이 즐겨찾기를 삭제하시겠습니까?')) return;
+    
+    try {
+      await favoriteAPI.removeFavorite(favoriteId, user.id);
+      // 삭제 후 목록 새로고침
+      await refreshFavorites();
+    } catch (err) {
+      console.error('즐겨찾기 삭제에 실패했습니다:', err);
+      alert('즐겨찾기 삭제에 실패했습니다.');
+    }
+  };
+
+  const renderFavoriteItem = (favorite) => {
+    const handleFavoriteClick = () => {
+      if (favorite.type === 'ROUTE') {
+        router.push(`/route/${favorite.refId}`);
+      } else if (favorite.type === 'STOP') {
+        router.push(`/station/${favorite.refId}`);
+      }
+    };
+
+         if (favorite.type === 'ROUTE') {
+       return (
+         <div 
+           key={favorite.id} 
+           className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
+           onClick={handleFavoriteClick}
+         >
+           <div className="font-medium text-gray-900">{favorite.refName}</div>
+           <div className="text-sm text-gray-600">{favorite.additionalInfo || '노선 정보'}</div>
+           <div className="text-xs text-blue-600 mt-1">{favorite.alias || '즐겨찾기'}</div>
+           <button
+             onClick={(e) => handleDeleteFavorite(e, favorite.id)}
+             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
+             title="삭제"
+           >
+             ×
+           </button>
+         </div>
+       );
+         } else if (favorite.type === 'STOP') {
+       return (
+         <div 
+           key={favorite.id} 
+           className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors relative group"
+           onClick={handleFavoriteClick}
+         >
+           <div className="font-medium text-gray-900">{favorite.refName}</div>
+           <div className="text-sm text-gray-600">{favorite.refId}</div>
+           <div className="text-xs text-blue-600 mt-1">{favorite.alias || '즐겨찾기'}</div>
+           <button
+             onClick={(e) => handleDeleteFavorite(e, favorite.id)}
+             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-lg font-bold w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100"
+             title="삭제"
+           >
+             ×
+           </button>
+         </div>
+       );
+    }
+    return null;
   };
 
   if (!isLoggedIn) return null;
@@ -45,30 +136,36 @@ export default function Dashboard() {
             <div className="lg:col-span-1 space-y-8">
               {/* 1번 영역: 즐겨찾기 */}
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">즐겨찾기 (4개의 항목)</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    즐겨찾기 ({favorites.length}개의 항목)
+                  </h3>
+                  <button
+                    onClick={refreshFavorites}
+                    className="text-blue-600 hover:text-blue-800 text-sm"
+                    title="새로고침"
+                  >
+                    ↻
+                  </button>
+                </div>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-gray-900">472번</div>
-                    <div className="text-sm text-gray-600">강남역 ↔ 잠실역</div>
-                    <div className="text-xs text-blue-600 mt-1">회사버스</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-gray-900">역삼역(2번출구)</div>
-                    <div className="text-sm text-gray-600">02301</div>
-                    <div className="text-xs text-blue-600 mt-1">회사앞</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-gray-900">146번</div>
-                    <div className="text-sm text-gray-600">강남역 ↔ 서초역</div>
-                    <div className="text-xs text-blue-600 mt-1">집버스</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium text-gray-900">강남역(중앙차로)</div>
-                    <div className="text-sm text-gray-600">02215</div>
-                  </div>
-                  <div className="p-3 border-2 border-dashed border-gray-300 rounded-lg text-center text-gray-500">
-                    + 새 즐겨찾기 추가
-                  </div>
+                  {loading ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                      <p className="text-sm text-gray-500 mt-2">즐겨찾기 목록을 불러오는 중...</p>
+                    </div>
+                  ) : error ? (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-red-500">{error}</p>
+                    </div>
+                  ) : favorites.length > 0 ? (
+                    favorites.map(renderFavoriteItem)
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-500">즐겨찾기가 없습니다.</p>
+                    </div>
+                  )}
+                  
                 </div>
               </div>
 
