@@ -43,15 +43,6 @@ const NearbyStations = ({ compact = false }) => {
       
       const response = await busAPI.getStationsAround(lat, lng);
       setStations(response.data.stations || []);
-      
-      // 사용자 위치 업데이트 (로그인된 경우)
-      if (user) {
-        try {
-          await busAPI.updateUserLocation(user.id, lat, lng, '현재 위치');
-        } catch (updateError) {
-          console.error('사용자 위치 업데이트 실패:', updateError);
-        }
-      }
     } catch (err) {
       console.error('주변 정류장 가져오기 실패:', err);
       setError('주변 정류장 정보를 가져올 수 없습니다.');
@@ -88,7 +79,7 @@ const NearbyStations = ({ compact = false }) => {
   // 컴팩트 모드 (대시보드용)
   if (compact) {
     return (
-      <div>
+      <div className="h-full flex flex-col">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <MdLocationOn className="text-xl text-blue-600" />
@@ -111,14 +102,14 @@ const NearbyStations = ({ compact = false }) => {
         )}
 
         {loading && !stations.length && (
-          <div className="flex justify-center items-center py-4">
+          <div className="flex justify-center items-center py-4 flex-1">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
             <span className="ml-2 text-gray-600 text-sm">주변 정류장을 찾는 중...</span>
           </div>
         )}
 
         {!loading && !error && !userLocation && (
-          <div className="text-center py-6">
+          <div className="text-center py-6 flex-1 flex flex-col justify-center">
             <FaMapMarkerAlt className="text-3xl text-gray-400 mx-auto mb-2" />
             <p className="text-gray-600 text-sm mb-3">현재 위치를 확인하여 주변 정류장을 찾아보세요</p>
             <button
@@ -131,7 +122,7 @@ const NearbyStations = ({ compact = false }) => {
         )}
 
         {stations.length > 0 && (
-          <div className="space-y-3 max-h-80 overflow-y-auto">
+          <div className="space-y-3 flex-1 overflow-y-auto">
             {stations.slice(0, 6).map((station, index) => (
               <div
                 key={station.stationId}
@@ -189,17 +180,9 @@ const NearbyStations = ({ compact = false }) => {
         )}
 
         {!loading && !error && userLocation && stations.length === 0 && (
-          <div className="text-center py-6">
+          <div className="text-center py-6 flex-1 flex flex-col justify-center">
             <FaBus className="text-3xl text-gray-400 mx-auto mb-2" />
             <p className="text-gray-600 text-sm">주변에 정류장이 없습니다</p>
-          </div>
-        )}
-
-        {stations.length > 6 && (
-          <div className="mt-3 text-center">
-            <button className="text-blue-600 hover:underline text-sm">
-              더 많은 정류장 보기 ({stations.length - 6}개 더)
-            </button>
           </div>
         )}
       </div>

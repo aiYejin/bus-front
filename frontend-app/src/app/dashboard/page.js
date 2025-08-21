@@ -196,15 +196,15 @@ export default function Dashboard() {
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* 검색창만 있는 상단 섹션 */}
-        <div className="flex items-center justify-center py-8 px-4 bg-white border-b">
+        <div className="flex items-center justify-center py-4 px-4 bg-white border-b">
           <div className="w-full max-w-7xl">
             <SearchComponent onSearchResult={handleSearchResult} />
           </div>
         </div>
 
         {/* 3개 영역으로 구성된 메인 콘텐츠 */}
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-[600px]">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* 왼쪽 영역: 즐겨찾기와 최근 검색 */}
             <div className="lg:col-span-1 space-y-8">
               {/* 1번 영역: 즐겨찾기 */}
@@ -277,9 +277,9 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* 3번 영역: 주변 정류장 (1:2 비율) */}
+            {/* 3번 영역: 주변 정류장 (직사각형 비율) */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-lg shadow-sm border p-6" style={{ height: 'calc(2 * (256px + 2rem + 3rem) + 2rem)' }}>
                 <NearbyStations compact={true} />
               </div>
             </div>

@@ -41,11 +41,6 @@ export const busAPI = {
   getStationsAround: (lat, lng) => apiClient.get('/api/stations/around', { 
     params: { x: lng, y: lat } 
   }),
-  
-  // 사용자 위치 업데이트
-  updateUserLocation: (userId, lat, lng, locationName) => apiClient.put(`/api/users/${userId}/location`, null, {
-    params: { lat, lng, locationName }
-  }),
 };
 
 export const favoriteAPI = {
