@@ -8,6 +8,7 @@ import Layout from '@/components/Layout';
 import FavoriteButton from '@/components/FavoriteButton';
 import NotificationButton from '@/components/NotificationButton';
 import NotificationToast from '@/components/NotificationToast';
+import RouteMap from '@/components/RouteMap';
 import useNotificationChecker from '@/hooks/useNotificationChecker';
 
 export default function RouteDetailPage() {
@@ -120,7 +121,7 @@ export default function RouteDetailPage() {
           onClose={() => setShowToast(false)}
         />
         
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto px-4 py-8" style={{ position: 'relative' }}>
           {/* 노선 기본 정보 */}
                      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
              <div className="flex items-center justify-between mb-4">
@@ -184,6 +185,13 @@ export default function RouteDetailPage() {
                </div>
              </div>
           </div>
+
+          {/* 노선 지도 */}
+          <RouteMap 
+            stations={routeDetail.stations || []}
+            routeLines={routeDetail.routeLines || []}
+            routeName={routeDetail.routeName}
+          />
 
                      {/* 정류장 목록 */}
            <div className="bg-white rounded-lg shadow-sm border p-6">

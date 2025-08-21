@@ -24,3 +24,74 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Leaflet 지도 드래그 개선 */
+.leaflet-container {
+  cursor: grab !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  touch-action: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.leaflet-container:active {
+  cursor: grabbing !important;
+}
+
+.leaflet-dragging .leaflet-container,
+.leaflet-dragging .leaflet-clickable {
+  cursor: grabbing !important;
+}
+
+.leaflet-control-container {
+  pointer-events: auto !important;
+}
+
+/* 드래그 패닝 영역 강화 */
+.leaflet-pane {
+  pointer-events: auto !important;
+}
+
+.leaflet-map-pane {
+  pointer-events: auto !important;
+}
+
+/* 마커와 팝업이 드래그를 방해하지 않도록 */
+.leaflet-marker-icon {
+  pointer-events: auto !important;
+}
+
+.leaflet-popup {
+  pointer-events: auto !important;
+}
+
+/* 지도 외부 컨테이너에서 이벤트 차단 방지 */
+.leaflet-container * {
+  box-sizing: border-box;
+}
+
+/* 지도 타일 로딩 문제 해결 */
+.leaflet-tile {
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.leaflet-tile-container {
+  position: relative !important;
+}
+
+/* 지도 컨테이너 크기 고정 */
+.leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  position: relative !important;
+}
+
+/* 타일 레이어 스타일 */
+.leaflet-tile-pane {
+  left: 0 !important;
+  top: 0 !important;
+}
