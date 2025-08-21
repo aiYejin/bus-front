@@ -1,14 +1,35 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AuthModal from '@/components/AuthModal';
+import NotificationToast from '@/components/NotificationToast';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname, useRouter } from 'next/navigation';
+import useNotificationChecker from '@/hooks/useNotificationChecker';
 
 export default function Layout({ children }) {
     const { isLoggedIn, user, isLoading, isAuthModalOpen, openAuthModal, closeAuthModal, handleLoginSuccess, handleLogout } = useAuth();
     const pathname = usePathname();
     const router = useRouter();
+    
+    // 전역 알림 Toast 상태
+    const [toastMessage, setToastMessage] = useState('');
+    const [showToast, setShowToast] = useState(false);
+    
+    // 전역 알림 체크
+    useNotificationChecker();
+
+    // 알림 Toast 이벤트 리스너
+    useEffect(() => {
+        const handleShowNotification = (event) => {
+            setToastMessage(event.detail);
+            setShowToast(true);
+        };
+
+        window.addEventListener('showNotification', handleShowNotification);
+        return () => window.removeEventListener('showNotification', handleShowNotification);
+    }, []);
 
     const handleLogoutClick = () => {
         handleLogout();
@@ -17,6 +38,13 @@ export default function Layout({ children }) {
 
     return (
         <div className="min-h-screen bg-gray-50">
+        {/* 전역 알림 Toast */}
+        <NotificationToast
+            message={toastMessage}
+            isVisible={showToast}
+            onClose={() => setShowToast(false)}
+        />
+        
         {/* 헤더 */}
         <header className="bg-white shadow-sm border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

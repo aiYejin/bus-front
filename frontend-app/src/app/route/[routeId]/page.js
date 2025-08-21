@@ -7,9 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import FavoriteButton from '@/components/FavoriteButton';
 import NotificationButton from '@/components/NotificationButton';
-import NotificationToast from '@/components/NotificationToast';
 import RouteMap from '@/components/RouteMap';
-import useNotificationChecker from '@/hooks/useNotificationChecker';
 
 export default function RouteDetailPage() {
   const params = useParams();
@@ -19,11 +17,7 @@ export default function RouteDetailPage() {
   const [routeDetail, setRouteDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [toastMessage, setToastMessage] = useState('');
-  const [showToast, setShowToast] = useState(false);
-  
-  // 알림 체커 훅 사용
-  useNotificationChecker();
+
 
   useEffect(() => {
     const fetchRouteDetail = async () => {
@@ -62,16 +56,7 @@ export default function RouteDetailPage() {
     fetchRouteDetail();
   }, [routeId, searchParams, user?.id]);
 
-  // 알림 Toast 이벤트 리스너
-  useEffect(() => {
-    const handleShowNotification = (event) => {
-      setToastMessage(event.detail);
-      setShowToast(true);
-    };
 
-    window.addEventListener('showNotification', handleShowNotification);
-    return () => window.removeEventListener('showNotification', handleShowNotification);
-  }, []);
 
   if (isLoading) {
     return (
@@ -114,13 +99,6 @@ export default function RouteDetailPage() {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        {/* 알림 Toast */}
-        <NotificationToast
-          message={toastMessage}
-          isVisible={showToast}
-          onClose={() => setShowToast(false)}
-        />
-        
         <div className="max-w-4xl mx-auto px-4 py-8" style={{ position: 'relative' }}>
           {/* 노선 기본 정보 */}
                      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">

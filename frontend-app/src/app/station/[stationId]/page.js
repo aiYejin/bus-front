@@ -7,8 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 import FavoriteButton from '@/components/FavoriteButton';
 import NotificationButton from '@/components/NotificationButton';
-import NotificationToast from '@/components/NotificationToast';
-import useNotificationChecker from '@/hooks/useNotificationChecker';
+
 import dynamic from 'next/dynamic';
 
 // Leaflet 지도 컴포넌트를 동적으로 로드 (SSR 방지)
@@ -25,11 +24,7 @@ export default function StationDetailPage() {
   const [stationDetail, setStationDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [toastMessage, setToastMessage] = useState('');
-  const [showToast, setShowToast] = useState(false);
-  
-  // 알림 체커 훅 사용
-  useNotificationChecker();
+
 
   // Leaflet CSS 동적 로드
   useEffect(() => {
@@ -83,17 +78,7 @@ export default function StationDetailPage() {
     fetchStationDetail();
   }, [stationId, searchParams, user?.id]);
 
-  // 알림 Toast 이벤트 리스너
-  useEffect(() => {
-    const handleShowNotification = (event) => {
-      console.log('[정류장 페이지] Toast 이벤트 수신:', event.detail);
-      setToastMessage(event.detail);
-      setShowToast(true);
-    };
 
-    window.addEventListener('showNotification', handleShowNotification);
-    return () => window.removeEventListener('showNotification', handleShowNotification);
-  }, []);
 
   // 15초마다 도착 정보 업데이트
   useEffect(() => {
@@ -161,13 +146,6 @@ export default function StationDetailPage() {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        {/* 알림 Toast */}
-        <NotificationToast
-          message={toastMessage}
-          isVisible={showToast}
-          onClose={() => setShowToast(false)}
-        />
-        
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* 정류장 기본 정보 */}
           <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">

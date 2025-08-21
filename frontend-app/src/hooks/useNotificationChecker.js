@@ -48,16 +48,42 @@ export default function useNotificationChecker() {
           console.log('[알림 발생!] 메시지:', message);
           
           // 브라우저 알림 권한 확인 및 요청
-          if (Notification.permission === 'default') {
-            await Notification.requestPermission();
+          console.log('[알림 발생!] 현재 권한 상태:', Notification.permission);
+          
+          let permission = Notification.permission;
+          
+          if (permission === 'default') {
+            console.log('[알림 발생!] 권한 요청 중...');
+            permission = await Notification.requestPermission();
+            console.log('[알림 발생!] 권한 요청 결과:', permission);
           }
           
           // 브라우저 알림 표시
-          if (Notification.permission === 'granted') {
-            new Notification('버스 도착 알림', {
-              body: message,
-              icon: '/logo.png'
-            });
+          if (permission === 'granted') {
+            console.log('[알림 발생!] 브라우저 알림 생성 중...');
+            try {
+              const notification = new Notification('🚌 버스 도착 알림', {
+                body: message,
+                icon: '/logo.png',
+                badge: '/logo.png',
+                tag: 'bus-arrival',
+                requireInteraction: true,
+                timestamp: Date.now()
+              });
+              
+              console.log('[알림 발생!] 브라우저 알림 생성 완료:', notification);
+              
+              // 클릭 이벤트 추가
+              notification.onclick = function() {
+                window.focus();
+                notification.close();
+              };
+              
+            } catch (error) {
+              console.error('[알림 발생!] 브라우저 알림 생성 실패:', error);
+            }
+          } else {
+            console.log('[알림 발생!] 브라우저 알림 권한 없음:', permission);
           }
           
           // 해당 알림 삭제
