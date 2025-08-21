@@ -83,7 +83,7 @@ export default function Home() {
               
               <div className="space-y-4">
                 <button
-                  onClick={openAuthModal}
+                  onClick={() => openAuthModal()} // 메인 페이지에서는 returnUrl을 전달하지 않음 (대시보드로 이동)
                   className="bg-blue-500 text-white px-8 py-4 rounded-md text-base font-medium hover:bg-blue-600 inline-block mb-4"
                 >
                   로그인하기

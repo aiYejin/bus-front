@@ -70,14 +70,20 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                     
                     // user 객체 생성하여 전달
                     const userData = {
-                        id: response.data.userId,
+                        id: parseInt(response.data.userId), // 안전하게 숫자로 변환
                         username: response.data.username,
                         email: response.data.email,
                         createdAt: response.data.createdAt
                     };
-                    onLoginSuccess(userData);
+                    const returnUrl = onLoginSuccess(userData);
                     onClose();
-                    router.push('/dashboard'); // 로그인 성공 시 대시보드로 이동
+                    
+                    // 리다이렉트 처리: returnUrl이 있으면 해당 위치로, 없으면 대시보드로
+                    if (returnUrl) {
+                        router.push(returnUrl);
+                    } else {
+                        router.push('/dashboard');
+                    }
                 }
             } else {
                 // 회원가입

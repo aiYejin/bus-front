@@ -36,9 +36,9 @@ export default function RouteDetailPage() {
         const response = await busAPI.getRouteDetail(routeId);
         setRouteDetail(response.data);
         
-        // 검색을 통해 들어온 경우에만 최근 검색에 추가
+        // 검색을 통해 들어온 경우에만 최근 검색에 추가 (로그인한 사용자만)
         const isFromSearch = searchParams.get('from') === 'search';
-        if (isFromSearch && user?.id && response.data) {
+        if (isFromSearch && user && user.id && typeof user.id === 'number' && response.data) {
           try {
             await recentAPI.addRecent({
               userId: user.id,

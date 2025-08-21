@@ -98,7 +98,7 @@ export default function Layout({ children }) {
                 ) : (
                     <div className="flex items-center space-x-5">
                     <button
-                        onClick={openAuthModal}
+                        onClick={() => openAuthModal(pathname)}
                         className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
                     >
                         로그인

@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
         if (userId) {
             setIsLoggedIn(true);
             setUser({
-                id: userId,
+                id: parseInt(userId),  // 문자열을 숫자로 변환
                 username: username,
                 email: email,
                 createdAt: createdAt,
@@ -36,7 +36,10 @@ export function AuthProvider({ children }) {
         setIsLoading(false);
     }, []);
 
-    const openAuthModal = () => {
+    const openAuthModal = (returnUrl = null) => {
+        if (returnUrl) {
+            localStorage.setItem('returnUrl', returnUrl);
+        }
         setIsAuthModalOpen(true);
     };
 
@@ -48,6 +51,14 @@ export function AuthProvider({ children }) {
         setIsLoggedIn(true);
         setUser(userData);
         closeAuthModal();
+        
+        // 로그인 후 리다이렉트 처리
+        const returnUrl = localStorage.getItem('returnUrl');
+        if (returnUrl) {
+            localStorage.removeItem('returnUrl');
+            return returnUrl; // AuthModal에서 사용할 수 있도록 반환
+        }
+        return null;
     };
 
     const handleLogout = () => {

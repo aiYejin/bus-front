@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { favoriteAPI } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePathname } from 'next/navigation';
 
 export default function FavoriteButton({ type, refId, refName, additionalInfo = '' }) {
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
+  const pathname = usePathname();
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +87,7 @@ export default function FavoriteButton({ type, refId, refName, additionalInfo = 
   // 즐겨찾기 토글
   const toggleFavorite = async () => {
     if (!user?.id) {
-      alert('로그인이 필요합니다.');
+      openAuthModal(pathname);
       return;
     }
 

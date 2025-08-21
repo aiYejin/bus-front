@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
+import { usePathname } from 'next/navigation';
 
 export default function NotificationButton({ stationId, routeId, routeName, stationName, alertMinutes = 3 }) {
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
+  const pathname = usePathname();
   const { hasNotification, addNotification, deleteNotification, findNotification } = useNotifications();
   const [isLoading, setIsLoading] = useState(false);
   const [showTimeSelector, setShowTimeSelector] = useState(false);
@@ -18,7 +20,7 @@ export default function NotificationButton({ stationId, routeId, routeName, stat
     e.stopPropagation();
     
     if (!user?.id) {
-      alert('로그인이 필요합니다.');
+      openAuthModal(pathname);
       return;
     }
 
