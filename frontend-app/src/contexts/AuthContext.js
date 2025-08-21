@@ -7,10 +7,21 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
-        setIsLoggedIn(!!userId);
+        const username = localStorage.getItem('username');
+        const email = localStorage.getItem('email');
+        
+        if (userId) {
+            setIsLoggedIn(true);
+            setUser({
+                id: userId,
+                username: username,
+                email: email
+            });
+        }
     }, []);
 
     const openAuthModal = () => {
@@ -21,8 +32,9 @@ export function AuthProvider({ children }) {
         setIsAuthModalOpen(false);
     };
 
-    const handleLoginSuccess = () => {
+    const handleLoginSuccess = (userData) => {
         setIsLoggedIn(true);
+        setUser(userData);
         closeAuthModal();
     };
 
@@ -31,10 +43,12 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('username');
         localStorage.removeItem('email');
         setIsLoggedIn(false);
+        setUser(null);
     };
 
     const value = {
         isLoggedIn,
+        user,
         isAuthModalOpen,
         openAuthModal,
         closeAuthModal,

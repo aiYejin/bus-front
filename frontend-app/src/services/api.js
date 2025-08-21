@@ -22,25 +22,37 @@ export const authAPI = {
 };
 
 export const busAPI = {
-  // 버스 검색
-  searchBus: (params) => apiClient.get('/api/bus/search', { params }),
+  // 통합 검색 (노선/정류장)
+  search: (query) => apiClient.get('/api/search', { params: { q: query } }),
   
-  // 버스 정보 조회
-  getBusInfo: (busId) => apiClient.get(`/api/bus/${busId}`),
+  // 정류장 상세 정보 (도착 정보 포함)
+  getStationDetail: (stationId) => apiClient.get(`/api/stations/${stationId}/detail`),
   
-  // 버스 정류장 정보
-  getBusStop: (stopId) => apiClient.get(`/api/bus/stop/${stopId}`),
+  // 노선 상세 정보 (정류장 목록 포함)
+  getRouteDetail: (routeId) => apiClient.get(`/api/routes/${routeId}/detail`),
+  
+  // 주변 정류장 검색
+  getStationsAround: (lat, lng) => apiClient.get('/api/stations/around', { 
+    params: { x: lng, y: lat } 
+  }),
+  
+  // 사용자 위치 업데이트
+  updateUserLocation: (userId, lat, lng) => apiClient.put(`/api/users/${userId}/location`, null, {
+    params: { lat, lng }
+  }),
 };
 
 export const favoriteAPI = {
   // 즐겨찾기 목록 조회
-  getFavorites: () => apiClient.get('/api/favorites'),
+  getFavorites: (userId) => apiClient.get('/api/favorites', { params: { userId } }),
   
   // 즐겨찾기 추가
   addFavorite: (favoriteData) => apiClient.post('/api/favorites', favoriteData),
   
   // 즐겨찾기 삭제
-  removeFavorite: (favoriteId) => apiClient.delete(`/api/favorites/${favoriteId}`),
+  removeFavorite: (favoriteId, userId) => apiClient.delete(`/api/favorites/${favoriteId}`, {
+    params: { userId }
+  }),
 };
 
 export const recentAPI = {

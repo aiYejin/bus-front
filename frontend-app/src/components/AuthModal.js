@@ -57,7 +57,14 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                     localStorage.setItem('userId', response.data.userId);
                     localStorage.setItem('username', response.data.username);
                     localStorage.setItem('email', response.data.email);
-                    onLoginSuccess();
+                    
+                    // user 객체 생성하여 전달
+                    const userData = {
+                        id: response.data.userId,
+                        username: response.data.username,
+                        email: response.data.email
+                    };
+                    onLoginSuccess(userData);
                     onClose();
                     router.push('/dashboard'); // 로그인 성공 시 대시보드로 이동
                 }

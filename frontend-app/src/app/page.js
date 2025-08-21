@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
+import SearchComponent from '@/components/SearchComponent';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchType, setSearchType] = useState('all');
   const { isLoggedIn, openAuthModal } = useAuth();
   const router = useRouter();
 
@@ -20,15 +19,9 @@ export default function Home() {
     }
   }, [isLoggedIn, router]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      const params = new URLSearchParams({ q: searchQuery });
-      if (searchType !== 'all') {
-        params.append('type', searchType);
-      }
-      window.location.href = `/search?${params.toString()}`;
-    }
+  const handleSearchResult = (searchData) => {
+    console.log('검색 결과:', searchData);
+    // 여기에 검색 결과 처리 로직 추가
   };
 
   // 로그인된 사용자가 이 페이지에 접근하면 로딩 표시
@@ -70,28 +63,10 @@ export default function Home() {
               </p>
             </div>
 
-            {/* 검색 폼 */}
-            <form onSubmit={handleSearch} className="mb-6">
-              <div className="relative">
-                <div className="flex items-center bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-                  <div className="flex-1 relative">
-                    <input
-                      type="text"
-                      placeholder="예: 472 (버스), 강남역 (정류장), 02215 (ARS)"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full px-6 py-4 text-lg text-gray-900 placeholder-gray-500 focus:outline-none"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 font-semibold transition-colors"
-                  >
-                    검색
-                  </button>
-                </div>
-              </div>
-            </form>
+            {/* 검색 컴포넌트 */}
+            <div className="mb-6">
+              <SearchComponent onSearchResult={handleSearchResult} />
+            </div>
           </div>
         </div>
 
