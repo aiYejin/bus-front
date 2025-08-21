@@ -67,17 +67,11 @@ export default function Layout({ children }) {
                     </div>
                 ) : (
                     <div className="flex items-center space-x-5">
-                    <button 
-                        onClick={openAuthModal}  
-                        className="text-gray-700 hover:text-blue-600 text-sm font-medium"
-                    >
-                        로그인
-                    </button>
                     <button
                         onClick={openAuthModal}
                         className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
                     >
-                        회원가입
+                        로그인
                     </button>
                     </div>
                 )}

@@ -19,6 +19,9 @@ export const authAPI = {
   
   // 회원가입
   signup: (userData) => apiClient.post('/api/auth/signup', userData),
+  
+  // 비밀번호 찾기
+  findPassword: (userData) => apiClient.post('/api/auth/find-password', userData),
 };
 
 export const busAPI = {
